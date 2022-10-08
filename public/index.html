@@ -24,11 +24,29 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>Strata+ User Action Replay</title>
+    <style>
+      #video {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        background: rgba(0, 0, 0, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: auto;
+        display: none;
+      }
+    </style>
+    <link rel="stylesheet" href="%PUBLIC_URL%/rrweb-replay-min.css" />
+    <script src="%PUBLIC_URL%/rrweb-replay-min.js"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <div id="video"></div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -40,4 +58,17 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+  <script>
+    const video = document.getElementById("video");
+    video.addEventListener(
+      "click",
+      (e) => {
+        if (e.target === video) {
+          video.innerHTML = "";
+          video.style.display = "none";
+        }
+      },
+      true
+    );
+  </script>
 </html>
