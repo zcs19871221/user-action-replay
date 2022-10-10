@@ -9,16 +9,27 @@ const getFiles = () => {
   return fs
     .readdirSync(logDir)
     .filter((name) => name.includes(".json"))
-    .map((name) => fs.readFileSync(path.join(logDir, name), "utf-8"));
+    .map((name) => ({
+      key: path.basename(name).replace(".json"),
+      content: fs.readFileSync(path.join(logDir, name), "utf-8"),
+    }));
+};
+
+const delFile = (target) => {
+  fs.readdirSync(logDir)
+    .filter((name) => (target ? name.includes(target) : true))
+    .forEach((name) => {
+      fs.unlinkSync(path.join(logDir, name));
+    });
 };
 
 http
   .createServer((req, res) => {
     try {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods", "*");
+      res.setHeader("Access-Control-Allow-Headers", "*");
       if (req.url.includes("/api/record")) {
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader("Access-Control-Allow-Methods", "*");
-        res.setHeader("Access-Control-Allow-Headers", "*");
         if (req.method === "GET") {
           res.setHeader("content-type", "application/json; charset=utf-8");
           res.end(JSON.stringify(getFiles()));
@@ -36,6 +47,9 @@ http
           });
           return;
         }
+      } else if (req.url.includes("/api/delete")) {
+        const name = req.url.split("?name=")[1];
+        delFile(name);
       }
       res.end("");
     } catch (error) {
