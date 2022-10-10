@@ -1,0 +1,43 @@
+<script src="https://cdn.jsdelivr.net/npm/rrweb@latest/dist/rrweb.min.js"></script>
+<script>
+  let curEvents = [];
+  rrweb.record({
+    emit(event, isCheckout) {
+      if (isCheckout) {
+        curEvents = [];
+      }
+      curEvents.push(event);
+    },
+    checkoutEveryNms: 30 * 1000,
+  });
+  const debounce = (func, delay) => {
+    let debounceTimer;
+    return function (...args) {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => func(...args), delay);
+    };
+  };
+
+  const sendLogs = (message, stack) => {
+    setTimeout(() => {
+      window.fetch("http://localhost:9981/api/record", {
+        body: JSON.stringify({
+          logs: curEvents,
+          errorInfo: {
+            message,
+            stack,
+          },
+        }),
+        method: "POST",
+      });
+    }, 1000);
+  };
+  const wrap = debounce(sendLogs, 20);
+  window.sendLogs = wrap;
+  window.onunhandledrejection = (event) => {
+    wrap(String(event.reason), "");
+  };
+  window.onerror = (message, file, line, column, errorObj) => {
+    wrap(String(message), errorObj?.stack ?? "");
+  };
+</script>
