@@ -1,11 +1,19 @@
-# What is this
+# Scenes to be used
 
-It is an error capture and playback system that can catch all page faults in a non-intrusive way, by integrating with our logging system, we can view these logs, and (more importantly) we can reproduce all user actions in the period before the error occurred, including OneStrata pages, all actions of the user:  mouse tracks, typing, scrolling, submitting, everything.
+Consider these user scenarios:
+
+- The BE successfully returns data, the FE parsing fails or data missing some properties cause the page to crash.
+- The page is unresponsive after an operation due to an unpredictable FE bug.
+
+These scenarios will have a great impact on users, but in the BE logs, everything is Ok, because at present we do not have a good means to collect these problems. Even if we collect them, it is hard to locate where and how the problems occur.
+
+# What can the system do
+
+Our system can collects FE errors and more importantly replay user error actions
+
+- So we can easily find where error happens and what is the reason.
+- We can improve our system before it has a significant impact (loss of users) by periodically investigating in the system log.
 
 # How to use
 
-Just import a javascript file to Onestrata page, then you could see the replay before the error occurred in our log(monitor) system.
-
-# Benefits
-
-Discover the hidden problems of the system and improve the user experience by viewing logs and playback.
+inject `<script>` tag which is in the `integration/template.html` to your system entry html page.
