@@ -17,7 +17,7 @@ const getFiles = () => {
 
 const delFile = (target) => {
   fs.readdirSync(logDir)
-    .filter((name) => (target ? name.includes(target) : true))
+    .filter((name) => (target ? name.includes(target) : name !== ".gitignore"))
     .forEach((name) => {
       fs.unlinkSync(path.join(logDir, name));
     });
